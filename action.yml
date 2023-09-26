@@ -2,6 +2,14 @@ name: 'code-butler'
 description: 'code-butler'
 author: 'ouchi2501'
 
+inputs:
+  GITHUB_TOKEN:
+    description: 'Derivative token for using the GitHub REST API'
+    required: true
+  OPENAI_API_KEY:
+    description: 'OpenAI API Key'
+    required: true
+
 runs:
   using: node20
   main: dist/index.js
