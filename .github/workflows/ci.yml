@@ -52,3 +52,6 @@ jobs:
       - name: Test Local Action
         id: test-action
         uses: ./
+        with:
+          GITHUB_TOKEN: "test-token"
+          OPENAI_API_KEY: "test-key"
