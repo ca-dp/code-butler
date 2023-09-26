@@ -2,8 +2,7 @@
 
 [![GitHub Super-Linter](https://github.com/ca-dp/code-butler/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/ca-dp/code-butler/actions/workflows/ci.yml/badge.svg)
-![Coverage](https://github.com/ca-dp/code-butler/badges/coverage.svg)
-![License](https://github.com/ca-dp/code-butler/LICENSE)
+![Coverage](https://github.com/ca-dp/code-butler/blob/main/badges/coverage.svg)
 
 GitHub Action for performing code reviews using the OpenAI API.
 
