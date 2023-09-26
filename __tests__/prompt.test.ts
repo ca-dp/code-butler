@@ -1,6 +1,8 @@
 import * as prompt from '../src/prompt'
 
 describe('getCodeReviewSystemPrompt', () => {
+  // Set required environment variables
+  process.env.OPENAI_API_KEY = 'mocked-api-key'
   it('should return the correct system prompt', () => {
     const expectedPrompt = `
     You are PR-Reviewer, a language model designed to review git pull requests.
