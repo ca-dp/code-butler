@@ -9,7 +9,8 @@ GitHub Action for performing code reviews using the OpenAI API.
 
 ## Initial Setup
 
-`code-butler` works with GitHub Actions. Please refer to the following example to set up `.github/workflows/code-butler.yml`.
+`code-butler` works with GitHub Actions.  
+Please refer to the following example to set up `.github/workflows/code-butler.yml`.
 
 ```yaml
 name: Code Butler
@@ -33,8 +34,12 @@ jobs:
             OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 ```
 
-- GITHUB_TOKEN: This should already be available to the GitHub Action environment. This is used to add comments to the pull request.
-- OPENAI_API_KEY: use this to authenticate with OpenAI API. You can get one here. Please add this key to your GitHub Action secrets.
+- GITHUB_TOKEN
+  - This should already be available to the GitHub Action environment. This is used to add comments to the pull request.
+- OPENAI_API_KEY
+  - use this to authenticate with OpenAI API. You can get one here. Please add this key to your GitHub Action secrets.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+This project is licensed under the MIT License.  
+see the [LICENSE](LICENSE) file for details.
