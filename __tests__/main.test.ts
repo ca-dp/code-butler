@@ -7,74 +7,83 @@
  */
 
 import * as core from '@actions/core'
-import * as main from '../src/main'
+import * as github from '../src/github'
+import * as ai from '../src/ai'
+import * as process from 'process'
+import * as prompt from '../src/prompt'
+import * as main from '../src/main' // Import the main module
 
-// Mock the GitHub Actions core library
-const debugMock = jest.spyOn(core, 'debug')
-const getInputMock = jest.spyOn(core, 'getInput')
-const setFailedMock = jest.spyOn(core, 'setFailed')
-const setOutputMock = jest.spyOn(core, 'setOutput')
+describe('run', () => {
+  it('should run the action successfully', async () => {
+    // Create mock functions
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue('Mocked PR diff')
 
-// Mock the action's main function
-const runMock = jest.spyOn(main, 'run')
+    const completionRequestMock = jest.spyOn(ai, 'completionRequest')
+    completionRequestMock.mockResolvedValue('Mocked AI response')
 
-// Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
+    const createGitHubCommentMock = jest.spyOn(github, 'createGitHubComment')
+    createGitHubCommentMock.mockResolvedValue(undefined)
 
-describe('action', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    // Set required environment variables
+    process.env.OPENAI_API_KEY = 'mocked-api-key'
 
-  it('sets the time output', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation((name: string): string => {
-      switch (name) {
-        case 'milliseconds':
-          return '500'
-        default:
-          return ''
-      }
-    })
+    // Set a dummy prompt
+    const getCodeReviewSystemPromptMock = jest.spyOn(
+      prompt,
+      'getCodeReviewSystemPrompt'
+    )
+    getCodeReviewSystemPromptMock.mockReturnValue('Mocked system prompt')
 
+    // Call the function under test
     await main.run()
-    expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
+    // Ensure each function was called correctly
+    expect(getPullRequestDiffMock).toHaveBeenCalled()
+    expect(completionRequestMock).toHaveBeenCalledWith(
+      'mocked-api-key',
+      'Mocked system prompt',
+      'Mocked PR diff'
     )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    expect(createGitHubCommentMock).toHaveBeenCalledWith('Mocked AI response')
+
+    // Clear environment variables
+    delete process.env.OPENAI_API_KEY
   })
 
-  it('sets a failed status', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation((name: string): string => {
-      switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
-        default:
-          return ''
-      }
-    })
+  it('should handle missing OPENAI_API_KEY', async () => {
+    // Clear required environment variables
+    delete process.env.OPENAI_API_KEY
 
+    // Set up a spy to capture the error message
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    // Call the function under test
     await main.run()
-    expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds not a number'
-    )
+    // Ensure the error message was set correctly
+    expect(setFailedMock).toHaveBeenCalledWith('OPENAI_API_KEY is not defined')
   })
+  it('should handle empty AI response message', async () => {
+    // Clear required environment variables
+    process.env.OPENAI_API_KEY = 'mocked-api-key'
+
+    // Set up a spy to capture the error message
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    // Mock AI response with an empty message
+    const completionRequestMock = jest.spyOn(ai, 'completionRequest')
+    completionRequestMock.mockResolvedValue('')
+
+    // Call the function under test
+    await main.run()
+
+    // Ensure the error message was set correctly
+    expect(setFailedMock).toHaveBeenCalledWith('Response content is missing')
+
+    // Clear environment variables
+    delete process.env.OPENAI_API_KEY
+  })
+
+  // Additional test cases for other error scenarios can be added
 })

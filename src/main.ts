@@ -1,5 +1,8 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import * as process from 'process'
+import * as prompt from './prompt'
+import * as ai from './ai'
+import * as github from './github'
 
 /**
  * The main function for the action.
@@ -7,18 +10,24 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const diff = await github.getPullRequestDiff()
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    if (process.env.OPENAI_API_KEY === undefined) {
+      core.setFailed('OPENAI_API_KEY is not defined')
+    }
+    const apiKey = process.env.OPENAI_API_KEY as string
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const sysPrompt = prompt.getCodeReviewSystemPrompt()
+    const messagePromise = ai.completionRequest(apiKey, sysPrompt, diff)
+    const message = await messagePromise
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    if (message === '') {
+      core.setFailed('Response content is missing')
+    }
+
+    await github.createGitHubComment(message)
+
+    console.log(message)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
