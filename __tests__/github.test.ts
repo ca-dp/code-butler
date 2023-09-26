@@ -33,7 +33,7 @@ describe('getPullRequestDiff', () => {
     nock('https://api.github.com', {
       reqheaders: {
         accept: 'application/vnd.github.v3.diff',
-        'user-agent': 'octokit-core.js/3.6.0 Node.js/20.7.0 (darwin; arm64)',
+        'user-agent': 'octokit-core.js/3.6.0 Node.js/18.17.1 (linux; x64)',
         authorization: 'token token',
         'accept-encoding': 'gzip,deflate'
       }
@@ -65,7 +65,7 @@ describe('createGitHubComment', () => {
     nock('https://api.github.com', {
       reqheaders: {
         accept: 'application/vnd.github.v3+json',
-        'user-agent': 'octokit-core.js/3.6.0 Node.js/20.7.0 (darwin; arm64)',
+        'user-agent': 'octokit-core.js/3.6.0 Node.js/18.17.1 (linux; x64)',
         authorization: 'token token',
         'content-type': 'application/json; charset=utf-8',
         'content-length': '23',
