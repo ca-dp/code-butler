@@ -11527,7 +11527,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const process = __importStar(__nccwpck_require__(7282));
 const prompt = __importStar(__nccwpck_require__(6495));
 const ai = __importStar(__nccwpck_require__(1744));
 const github = __importStar(__nccwpck_require__(978));
@@ -11538,10 +11537,7 @@ const github = __importStar(__nccwpck_require__(978));
 async function run() {
     try {
         const diff = await github.getPullRequestDiff();
-        if (process.env.OPENAI_API_KEY === undefined) {
-            core.setFailed('OPENAI_API_KEY is not defined');
-        }
-        const apiKey = process.env.OPENAI_API_KEY;
+        const apiKey = core.getInput('OPENAI_API_KEY', { required: true });
         const sysPrompt = prompt.getCodeReviewSystemPrompt();
         const messagePromise = ai.completionRequest(apiKey, sysPrompt, diff);
         const message = await messagePromise;
@@ -11734,14 +11730,6 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
-
-/***/ }),
-
-/***/ 7282:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("process");
 
 /***/ }),
 
