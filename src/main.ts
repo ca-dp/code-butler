@@ -1,5 +1,4 @@
 import * as core from '@actions/core'
-import * as process from 'process'
 import * as prompt from './prompt'
 import * as ai from './ai'
 import * as github from './github'
@@ -12,10 +11,7 @@ export async function run(): Promise<void> {
   try {
     const diff = await github.getPullRequestDiff()
 
-    if (process.env.OPENAI_API_KEY === undefined) {
-      core.setFailed('OPENAI_API_KEY is not defined')
-    }
-    const apiKey = process.env.OPENAI_API_KEY as string
+    const apiKey = core.getInput('OPENAI_API_KEY', { required: true })
 
     const sysPrompt = prompt.getCodeReviewSystemPrompt()
     const messagePromise = ai.completionRequest(apiKey, sysPrompt, diff)
