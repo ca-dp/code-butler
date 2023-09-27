@@ -62,6 +62,18 @@ const codeReviewSystemPrompt = `
       
       Don't repeat the prompt in the answer, and avoid outputting the 'type' and 'description' fields.
 `
+
+const chatSystemPrompt = `
+    You are Software-Developer, a language model designed to chat with software developers.
+    Your task is to chat with the user, and respond to questions from troubled software developers and solve their problems.
+    Please ignore the '/chat' at the beginning of the question.
+    Also, don't repeat the prompt in your answer.
+`
+
 export function getCodeReviewSystemPrompt(): string {
   return codeReviewSystemPrompt
+}
+
+export function getChatSystemPrompt(): string {
+  return chatSystemPrompt
 }

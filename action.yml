@@ -9,6 +9,9 @@ inputs:
   OPENAI_API_KEY:
     description: 'OpenAI API Key'
     required: true
+  cmd:
+    description: 'Command to run(review or chat)'
+    required: true
 
 runs:
   using: node20

@@ -74,3 +74,18 @@ describe('getCodeReviewSystemPrompt', () => {
     expect(result).toEqual(expectedPrompt)
   })
 })
+
+describe('getChatSystemPrompt', () => {
+  it('should return the correct system prompt', () => {
+    const expectedPrompt = `
+    You are Software-Developer, a language model designed to chat with software developers.
+    Your task is to chat with the user, and respond to questions from troubled software developers and solve their problems.
+    Please ignore the '/chat' at the beginning of the question.
+    Also, don't repeat the prompt in your answer.
+`
+
+    const result = prompt.getChatSystemPrompt()
+
+    expect(result).toEqual(expectedPrompt)
+  })
+})

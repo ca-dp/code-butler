@@ -11464,7 +11464,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createGitHubComment = exports.getPullRequestDiff = void 0;
+exports.getIssueComment = exports.createGitHubComment = exports.getPullRequestDiff = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 async function getPullRequestDiff() {
@@ -11492,6 +11492,17 @@ async function createGitHubComment(message) {
     });
 }
 exports.createGitHubComment = createGitHubComment;
+async function getIssueComment() {
+    const token = core.getInput('GITHUB_TOKEN', { required: true });
+    const octokit = github.getOctokit(token);
+    const { data: comment } = await octokit.rest.issues.getComment({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        comment_id: github.context.issue.number
+    });
+    return comment.body || '';
+}
+exports.getIssueComment = getIssueComment;
 
 
 /***/ }),
@@ -11536,16 +11547,34 @@ const github = __importStar(__nccwpck_require__(978));
  */
 async function run() {
     try {
-        const diff = await github.getPullRequestDiff();
-        const apiKey = core.getInput('OPENAI_API_KEY', { required: true });
-        const sysPrompt = prompt.getCodeReviewSystemPrompt();
-        const messagePromise = ai.completionRequest(apiKey, sysPrompt, diff);
-        const message = await messagePromise;
-        if (message === '') {
-            core.setFailed('Response content is missing');
+        const cmd = core.getInput('cmd', { required: true });
+        switch (cmd) {
+            case 'review': {
+                const diff = await github.getPullRequestDiff();
+                const sysPrompt = prompt.getCodeReviewSystemPrompt();
+                const messagePromise = ai.completionRequest(core.getInput('OPENAI_API_KEY', { required: true }), sysPrompt, diff);
+                const message = await messagePromise;
+                if (message === '') {
+                    core.setFailed('Response content is missing');
+                }
+                await github.createGitHubComment(message);
+                break;
+            }
+            case 'chat': {
+                const comment = await github.getIssueComment();
+                const chatSystemPrompt = prompt.getChatSystemPrompt();
+                const responseMessage = ai.completionRequest(core.getInput('OPENAI_API_KEY', { required: true }), chatSystemPrompt, comment);
+                const response = await responseMessage;
+                if (response === '') {
+                    core.setFailed('Response content is missing');
+                }
+                await github.createGitHubComment(response);
+                break;
+            }
+            default:
+                core.setFailed('Unknown command');
+                break;
         }
-        await github.createGitHubComment(message);
-        console.log(message);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -11564,7 +11593,7 @@ exports.run = run;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getCodeReviewSystemPrompt = void 0;
+exports.getChatSystemPrompt = exports.getCodeReviewSystemPrompt = void 0;
 const codeReviewSystemPrompt = `
     You are PR-Reviewer, a language model designed to review git pull requests.
     Your task is to provide constructive and concise feedback for the PR, and also provide meaningful code suggestions. 
@@ -11629,10 +11658,20 @@ const codeReviewSystemPrompt = `
       
       Don't repeat the prompt in the answer, and avoid outputting the 'type' and 'description' fields.
 `;
+const chatSystemPrompt = `
+    You are Software-Developer, a language model designed to chat with software developers.
+    Your task is to chat with the user, and respond to questions from troubled software developers and solve their problems.
+    Please ignore the '/chat' at the beginning of the question.
+    Also, don't repeat the prompt in your answer.
+`;
 function getCodeReviewSystemPrompt() {
     return codeReviewSystemPrompt;
 }
 exports.getCodeReviewSystemPrompt = getCodeReviewSystemPrompt;
+function getChatSystemPrompt() {
+    return chatSystemPrompt;
+}
+exports.getChatSystemPrompt = getChatSystemPrompt;
 
 
 /***/ }),
