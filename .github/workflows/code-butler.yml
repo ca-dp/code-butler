@@ -27,4 +27,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           cmd: chat
-          comment_body: ${{ steps.get-comment-body.outputs.comment_body }}
+          comment_body: ${{ github.event.comment.body }}
