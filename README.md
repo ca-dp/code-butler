@@ -23,14 +23,24 @@ on:
     types: [created]
 
 jobs:
-    code-butler:
-        if: startsWith(github.event.comment.body, '/review')
-        runs-on: ubuntu-latest
-        steps:
-        - uses: ca-dp/code-butler@latest
-          with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  review:
+    if: startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1.0.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: review
+  chat:
+    if: startsWith(github.event.comment.body, '/chat')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1.0.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: chat
 ```
 
 - GITHUB_TOKEN
