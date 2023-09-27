@@ -41,12 +41,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           cmd: chat
+          comment_body: ${{ steps.get-comment-body.outputs.comment_body }}
 ```
 
 - GITHUB_TOKEN
   - This should already be available to the GitHub Action environment. This is used to add comments to the pull request.
 - OPENAI_API_KEY
   - use this to authenticate with OpenAI API. You can get one here. Please add this key to your GitHub Action secrets.
+- cmd
+  - This is the command to run. Currently, `review` and `chat` are supported.
+  - `review` will add a comment to the pull request with a code review.
+  - `chat` will add a comment to the pull request with a chat message.
+- comment_body
+  - This is the body of the comment that will be added to the pull request. This is only used when `cmd` is set to `chat`.
+  - This is an optional parameter. The body of the comment that triggered the GitHub Action will be used.
 
 ## License
 
