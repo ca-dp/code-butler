@@ -28,3 +28,16 @@ export async function createGitHubComment(message: string): Promise<void> {
     body: message
   })
 }
+
+export async function getIssueComment(): Promise<string> {
+  const token = core.getInput('GITHUB_TOKEN', { required: true })
+  const octokit = github.getOctokit(token)
+
+  const { data: comment } = await octokit.rest.issues.getComment({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    comment_id: github.context.issue.number
+  })
+
+  return (comment.body as unknown as string) || ''
+}

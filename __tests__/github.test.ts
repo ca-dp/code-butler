@@ -2,7 +2,11 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import nock from 'nock' // Import nock for mocking HTTP requests
 
-import { getPullRequestDiff, createGitHubComment } from '../src/github' // Please specify the path to your module
+import {
+  getPullRequestDiff,
+  createGitHubComment,
+  getIssueComment
+} from '../src/github' // Please specify the path to your module
 
 const getInputMock = jest.spyOn(core, 'getInput')
 // Set the GITHUB_REPOSITORY environment variable for testing
@@ -74,5 +78,38 @@ describe('createGitHubComment', () => {
       .reply(201)
     await createGitHubComment('Test comment')
     // Test that the GitHub API request is successful
+  })
+})
+
+describe('getIssueComment', () => {
+  it('should return the issue comment', async () => {
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'GITHUB_TOKEN':
+          return 'token'
+        default:
+          return ''
+      }
+    })
+    github.context.payload = {
+      issue: {
+        // Mock the issue number
+        number: 2
+      }
+    }
+    nock('https://api.github.com', {
+      reqheaders: {
+        accept: 'application/vnd.github.v3+json',
+        authorization: 'token token',
+        'accept-encoding': 'gzip,deflate'
+      }
+    })
+      .get('/repos/test-org/test-repo/issues/comments/2')
+      .reply(200, {
+        body: 'This is a test comment'
+      })
+
+    const comment = await getIssueComment()
+    expect(comment).toBe('This is a test comment')
   })
 })

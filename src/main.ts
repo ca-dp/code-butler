@@ -9,21 +9,48 @@ import * as github from './github'
  */
 export async function run(): Promise<void> {
   try {
-    const diff = await github.getPullRequestDiff()
+    const cmd = core.getInput('cmd', { required: true })
+    switch (cmd) {
+      case 'review': {
+        const diff = await github.getPullRequestDiff()
+        const sysPrompt = prompt.getCodeReviewSystemPrompt()
+        const messagePromise = ai.completionRequest(
+          core.getInput('OPENAI_API_KEY', { required: true }),
+          sysPrompt,
+          diff
+        )
+        const message = await messagePromise
 
-    const apiKey = core.getInput('OPENAI_API_KEY', { required: true })
+        if (message === '') {
+          core.setFailed('Response content is missing')
+        }
 
-    const sysPrompt = prompt.getCodeReviewSystemPrompt()
-    const messagePromise = ai.completionRequest(apiKey, sysPrompt, diff)
-    const message = await messagePromise
+        await github.createGitHubComment(message)
 
-    if (message === '') {
-      core.setFailed('Response content is missing')
+        break
+      }
+      case 'chat': {
+        const comment = await github.getIssueComment()
+
+        const chatSystemPrompt = prompt.getChatSystemPrompt()
+        const responseMessage = ai.completionRequest(
+          core.getInput('OPENAI_API_KEY', { required: true }),
+          chatSystemPrompt,
+          comment
+        )
+        const response = await responseMessage
+        if (response === '') {
+          core.setFailed('Response content is missing')
+        }
+
+        await github.createGitHubComment(response)
+
+        break
+      }
+      default:
+        core.setFailed('Unknown command')
+        break
     }
-
-    await github.createGitHubComment(message)
-
-    console.log(message)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
