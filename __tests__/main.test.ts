@@ -116,8 +116,6 @@ describe('run', () => {
 
   it('should run the action successfully on chat', async () => {
     // Create mock functions
-    const getIssueCommentMock = jest.spyOn(github, 'getIssueComment')
-    getIssueCommentMock.mockResolvedValue('Mocked issue comment')
 
     const completionRequestMock = jest.spyOn(ai, 'completionRequest')
     completionRequestMock.mockResolvedValue('Mocked AI response')
@@ -132,6 +130,8 @@ describe('run', () => {
           return 'mocked-api-key'
         case 'cmd':
           return 'chat'
+        case 'comment_body':
+          return 'Mocked issue comment'
         default:
           return ''
       }
@@ -145,7 +145,6 @@ describe('run', () => {
     await main.run()
 
     // Ensure each function was called correctly
-    expect(getIssueCommentMock).toHaveBeenCalled()
     expect(completionRequestMock).toHaveBeenCalledWith(
       'mocked-api-key',
       'Mocked system prompt',
@@ -163,6 +162,8 @@ describe('run', () => {
           return 'mocked-api-key'
         case 'cmd':
           return 'chat'
+        case 'comment_body':
+          return 'Mocked issue comment'
         default:
           return ''
       }
@@ -170,10 +171,6 @@ describe('run', () => {
 
     // Set up a spy to capture the error message
     const setFailedMock = jest.spyOn(core, 'setFailed')
-
-    // Create mock functions
-    const getIssueCommentMock = jest.spyOn(github, 'getIssueComment')
-    getIssueCommentMock.mockResolvedValue('Mocked issue comment')
 
     // Mock AI response with an empty message
     const completionRequestMock = jest.spyOn(ai, 'completionRequest')

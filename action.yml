@@ -12,6 +12,9 @@ inputs:
   cmd:
     description: 'Command to run(review or chat)'
     required: true
+  comment_body:
+    description: 'Comment body'
+    required: false
 
 runs:
   using: node20
