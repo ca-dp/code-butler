@@ -30,7 +30,11 @@ export async function run(): Promise<void> {
         break
       }
       case 'chat': {
-        const comment = await github.getIssueComment()
+        const comment = core.getInput('comment_body', { required: false })
+
+        if (comment === '') {
+          core.setFailed('Comment body is missing')
+        }
 
         const chatSystemPrompt = prompt.getChatSystemPrompt()
         const responseMessage = ai.completionRequest(

@@ -11464,7 +11464,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getIssueComment = exports.createGitHubComment = exports.getPullRequestDiff = void 0;
+exports.createGitHubComment = exports.getPullRequestDiff = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 async function getPullRequestDiff() {
@@ -11492,17 +11492,6 @@ async function createGitHubComment(message) {
     });
 }
 exports.createGitHubComment = createGitHubComment;
-async function getIssueComment() {
-    const token = core.getInput('GITHUB_TOKEN', { required: true });
-    const octokit = github.getOctokit(token);
-    const { data: comment } = await octokit.rest.issues.getComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        comment_id: github.context.issue.number
-    });
-    return comment.body || '';
-}
-exports.getIssueComment = getIssueComment;
 
 
 /***/ }),
@@ -11561,7 +11550,10 @@ async function run() {
                 break;
             }
             case 'chat': {
-                const comment = await github.getIssueComment();
+                const comment = core.getInput('comment_body', { required: false });
+                if (comment === '') {
+                    core.setFailed('Comment body is missing');
+                }
                 const chatSystemPrompt = prompt.getChatSystemPrompt();
                 const responseMessage = ai.completionRequest(core.getInput('OPENAI_API_KEY', { required: true }), chatSystemPrompt, comment);
                 const response = await responseMessage;
