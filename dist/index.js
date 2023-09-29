@@ -11402,6 +11402,7 @@ const openai_1 = __importDefault(__nccwpck_require__(47));
 async function completionRequest(apiKey, systemPrompt, userPrompt) {
     try {
         const openai = new openai_1.default({ apiKey });
+        const requestTimeout = 300 * 1000; // 5 minutes
         const response = await openai.chat.completions.create({
             messages: [
                 { role: 'system', content: systemPrompt },
@@ -11409,7 +11410,7 @@ async function completionRequest(apiKey, systemPrompt, userPrompt) {
             ],
             model: 'gpt-3.5-turbo'
         }, {
-            timeout: 60 * 1000 // 60s
+            timeout: requestTimeout
         });
         if (response.choices &&
             response.choices[0] &&
