@@ -7,13 +7,18 @@ export async function completionRequest(
 ): Promise<string> {
   try {
     const openai = new OpenAI({ apiKey })
-    const response = await openai.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      model: 'gpt-3.5-turbo'
-    })
+    const response = await openai.chat.completions.create(
+      {
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        model: 'gpt-3.5-turbo'
+      },
+      {
+        timeout: 60 * 1000 // 60s
+      }
+    )
     if (
       response.choices &&
       response.choices[0] &&

@@ -11408,6 +11408,8 @@ async function completionRequest(apiKey, systemPrompt, userPrompt) {
                 { role: 'user', content: userPrompt }
             ],
             model: 'gpt-3.5-turbo'
+        }, {
+            timeout: 60 * 1000 // 60s
         });
         if (response.choices &&
             response.choices[0] &&
