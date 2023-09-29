@@ -7,6 +7,7 @@ export async function completionRequest(
 ): Promise<string> {
   try {
     const openai = new OpenAI({ apiKey })
+    const timeout = 300 * 1000 // 5 minutes
     const response = await openai.chat.completions.create(
       {
         messages: [
@@ -16,7 +17,7 @@ export async function completionRequest(
         model: 'gpt-3.5-turbo'
       },
       {
-        timeout: 60 * 1000 // 60s
+        timeout: timeout
       }
     )
     if (
