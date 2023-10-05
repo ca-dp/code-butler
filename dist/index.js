@@ -11587,7 +11587,10 @@ async function run() {
                 const responseMessage = ai.completionRequest(core.getInput('OPENAI_API_KEY', { required: true }), systemPrompt, comment);
                 const response = await responseMessage;
                 if (response === '') {
-                    return;
+                    core.setFailed('Response content is missing');
+                }
+                if (response === 'NO_REPLY') {
+                    break;
                 }
                 await github.editGitHubComment(comment + '\n\n' + response, parseInt(commentId));
                 break;
@@ -11683,7 +11686,7 @@ const translateSystemPrompt = `
     I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English.
     I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences.
     Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations.
-    If the detected language is English, return empty string.
+    If the detected language is English, answer 'NO_REPLY'.
     Also, don't repeat the prompt in your answer.
 `;
 function getCodeReviewSystemPrompt() {
