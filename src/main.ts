@@ -67,7 +67,7 @@ export async function run(): Promise<void> {
         )
         const response = await responseMessage
         if (response === '') {
-          core.setFailed('Response content is missing')
+          return
         }
 
         await github.editGitHubComment(
