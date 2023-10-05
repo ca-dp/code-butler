@@ -56,6 +56,25 @@ jobs:
   - This is the body of the comment that will be added to the pull request. This is only used when `cmd` is set to `chat`.
   - This is an optional parameter. The body of the comment that triggered the GitHub Action will be used.
 
+## Features
+
+### Code Review
+
+<img src="https://github.com/ca-dp/code-butler/assets/11391317/351bc422-24a5-4606-b550-8338ebea78da" width="600px">
+
+When you comment `/review` within a pull request, the AI will perform a code review for you.  
+The PR Analysis section will describe the main theme, a summary of the PR, and what type of PR it is.  
+The PR Feedback section provides suggestions and constructive feedback on the code.  
+The Security concerns section will also point out any security concerns you may have.  
+
+### Chat
+
+![スクリーンショット 2023-10-05 午後2 06 20](https://github.com/ca-dp/code-butler/assets/11391317/543c3340-0174-421b-b916-3e08542df0aa)
+
+When you comment `/chat` within a pull request, the AI will respond to your comment.  
+Basically any question can be answered.  
+You will be able to communicate with ChatGPT on PR as well.  
+
 ## License
 
 This project is licensed under the MIT License.  
