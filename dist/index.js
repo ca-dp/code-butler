@@ -11467,7 +11467,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createGitHubComment = exports.getPullRequestDiff = void 0;
+exports.editGitHubComment = exports.createGitHubComment = exports.getPullRequestDiff = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 async function getPullRequestDiff() {
@@ -11495,6 +11495,17 @@ async function createGitHubComment(message) {
     });
 }
 exports.createGitHubComment = createGitHubComment;
+async function editGitHubComment(message, commentId) {
+    const token = core.getInput('GITHUB_TOKEN', { required: true });
+    const octokit = github.getOctokit(token);
+    await octokit.rest.issues.updateComment({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        comment_id: commentId,
+        body: message
+    });
+}
+exports.editGitHubComment = editGitHubComment;
 
 
 /***/ }),
@@ -11566,6 +11577,21 @@ async function run() {
                 await github.createGitHubComment(response);
                 break;
             }
+            case 'translate': {
+                const comment = core.getInput('comment_body', { required: false });
+                if (comment === '') {
+                    core.setFailed('Comment body is missing');
+                }
+                const systemPrompt = prompt.getTranslateSystemPrompt();
+                const responseMessage = ai.completionRequest(core.getInput('OPENAI_API_KEY', { required: true }), systemPrompt, comment);
+                const response = await responseMessage;
+                if (response === '') {
+                    core.setFailed('Response content is missing');
+                }
+                const commentId = core.getInput('comment_id', { required: false });
+                await github.editGitHubComment(comment + '\n\n' + response, parseInt(commentId));
+                break;
+            }
             default:
                 core.setFailed('Unknown command');
                 break;
@@ -11588,7 +11614,7 @@ exports.run = run;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getChatSystemPrompt = exports.getCodeReviewSystemPrompt = void 0;
+exports.getTranslateSystemPrompt = exports.getChatSystemPrompt = exports.getCodeReviewSystemPrompt = void 0;
 const codeReviewSystemPrompt = `
     You are PR Reviewer, a language model tasked with reviewing Git pull requests.
     Your role is to provide valuable and concise feedback for the PR, with a primary focus on evaluating the new code introduced in the changes (lines starting with '+').
@@ -11652,6 +11678,13 @@ const chatSystemPrompt = `
     Please ignore the '/chat' at the beginning of the question.
     Also, don't repeat the prompt in your answer.
 `;
+const translateSystemPrompt = (/* unused pure expression or super */ null && (`
+    I want you to act as an English translator, spelling corrector and improver.
+    I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English.
+    I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences.
+    Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations.
+    Also, don't repeat the prompt in your answer.
+`));
 function getCodeReviewSystemPrompt() {
     return codeReviewSystemPrompt;
 }
@@ -11660,6 +11693,10 @@ function getChatSystemPrompt() {
     return chatSystemPrompt;
 }
 exports.getChatSystemPrompt = getChatSystemPrompt;
+function getTranslateSystemPrompt() {
+    return chatSystemPrompt;
+}
+exports.getTranslateSystemPrompt = getTranslateSystemPrompt;
 
 
 /***/ }),

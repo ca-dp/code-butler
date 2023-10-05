@@ -70,7 +70,10 @@ export async function run(): Promise<void> {
         }
 
         const commentId = core.getInput('comment_id', { required: false })
-        await github.editGitHubComment(comment + '\n\n' + response, commentId)
+        await github.editGitHubComment(
+          comment + '\n\n' + response,
+          parseInt(commentId)
+        )
 
         break
       }
