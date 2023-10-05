@@ -11578,6 +11578,7 @@ async function run() {
                 break;
             }
             case 'translate': {
+                const commentId = core.getInput('comment_id', { required: false });
                 const comment = core.getInput('comment_body', { required: false });
                 if (comment === '') {
                     core.setFailed('Comment body is missing');
@@ -11588,7 +11589,6 @@ async function run() {
                 if (response === '') {
                     core.setFailed('Response content is missing');
                 }
-                const commentId = core.getInput('comment_id', { required: false });
                 await github.editGitHubComment(comment + '\n\n' + response, parseInt(commentId));
                 break;
             }
@@ -11678,13 +11678,13 @@ const chatSystemPrompt = `
     Please ignore the '/chat' at the beginning of the question.
     Also, don't repeat the prompt in your answer.
 `;
-const translateSystemPrompt = (/* unused pure expression or super */ null && (`
+const translateSystemPrompt = `
     I want you to act as an English translator, spelling corrector and improver.
     I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English.
     I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences.
     Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations.
     Also, don't repeat the prompt in your answer.
-`));
+`;
 function getCodeReviewSystemPrompt() {
     return codeReviewSystemPrompt;
 }
@@ -11694,7 +11694,7 @@ function getChatSystemPrompt() {
 }
 exports.getChatSystemPrompt = getChatSystemPrompt;
 function getTranslateSystemPrompt() {
-    return chatSystemPrompt;
+    return translateSystemPrompt;
 }
 exports.getTranslateSystemPrompt = getTranslateSystemPrompt;
 
