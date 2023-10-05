@@ -52,6 +52,7 @@ export async function run(): Promise<void> {
         break
       }
       case 'translate': {
+        const commentId = core.getInput('comment_id', { required: false })
         const comment = core.getInput('comment_body', { required: false })
 
         if (comment === '') {
@@ -69,7 +70,6 @@ export async function run(): Promise<void> {
           core.setFailed('Response content is missing')
         }
 
-        const commentId = core.getInput('comment_id', { required: false })
         await github.editGitHubComment(
           comment + '\n\n' + response,
           parseInt(commentId)
