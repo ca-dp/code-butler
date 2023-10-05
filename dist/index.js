@@ -11590,6 +11590,7 @@ async function run() {
                     core.setFailed('Response content is missing');
                 }
                 if (response === 'NO_REPLY') {
+                    console.log('Skipping comment');
                     break;
                 }
                 await github.editGitHubComment(comment + '\n\n' + response, parseInt(commentId));

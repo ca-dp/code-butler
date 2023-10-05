@@ -70,6 +70,7 @@ export async function run(): Promise<void> {
           core.setFailed('Response content is missing')
         }
         if (response === 'NO_REPLY') {
+          console.log('Skipping comment')
           break
         }
 
