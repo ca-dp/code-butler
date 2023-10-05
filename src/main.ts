@@ -51,6 +51,29 @@ export async function run(): Promise<void> {
 
         break
       }
+      case 'translate': {
+        const comment = core.getInput('comment_body', { required: false })
+
+        if (comment === '') {
+          core.setFailed('Comment body is missing')
+        }
+
+        const systemPrompt = prompt.getTranslateSystemPrompt()
+        const responseMessage = ai.completionRequest(
+          core.getInput('OPENAI_API_KEY', { required: true }),
+          systemPrompt,
+          comment
+        )
+        const response = await responseMessage
+        if (response === '') {
+          core.setFailed('Response content is missing')
+        }
+
+        const commentId = core.getInput('comment_id', { required: false })
+        await github.editGitHubComment(comment + '\n\n' + response, commentId)
+
+        break
+      }
       default:
         core.setFailed('Unknown command')
         break

@@ -28,3 +28,15 @@ export async function createGitHubComment(message: string): Promise<void> {
     body: message
   })
 }
+
+export async function editGitHubComment(message: string, commentId: number): Promise<void> {
+  const token = core.getInput('GITHUB_TOKEN', { required: true })
+  const octokit = github.getOctokit(token)
+
+  await octokit.rest.issues.updateComment({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    comment_id: commentId,
+    body: message
+  })
+}
