@@ -71,7 +71,6 @@ The Security concerns section will also point out any security concerns you may 
 
 ![スクリーンショット 2023-10-05 午後2 06 20](https://github.com/ca-dp/code-butler/assets/11391317/543c3340-0174-421b-b916-3e08542df0aa)
 
-
 When you comment `/chat` within a pull request, the AI will respond to your comment.  
 Basically any question can be answered.  
 You will be able to communicate with ChatGPT on PR as well.  
