@@ -8,7 +8,7 @@ GitHub Action for performing code reviews using the OpenAI API.
 
 ## Initial Setup
 
-`code-butler` works with GitHub Actions.  
+`code-butler` works with GitHub Actions.
 Please refer to the following example to set up `.github/workflows/code-butler.yml`.
 
 ```yaml
@@ -16,6 +16,7 @@ name: Code Butler
 
 permissions:
   contents: read
+  issues: write
   pull-requests: write
 
 on:
