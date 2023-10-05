@@ -80,5 +80,5 @@ export function getChatSystemPrompt(): string {
 }
 
 export function getTranslateSystemPrompt(): string {
-  return chatSystemPrompt
+  return translateSystemPrompt
 }
