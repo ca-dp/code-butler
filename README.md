@@ -56,6 +56,21 @@ jobs:
   - This is the body of the comment that will be added to the pull request. This is only used when `cmd` is set to `chat`.
   - This is an optional parameter. The body of the comment that triggered the GitHub Action will be used.
 
+## Features
+
+### Code Review
+
+When you comment `/review` within a pull request, the AI will perform a code review for you.
+The PR Analysis section will describe the main theme, a summary of the PR, and what type of PR it is.
+The PR Feedback section provides suggestions and constructive feedback on the code.
+The Security concerns section will also point out any security concerns you may have.
+
+### Chat
+  
+When you comment `/chat` within a pull request, the AI will respond to your comment.
+Basically any question can be answered.
+You will be able to communicate with ChatGPT on PR as well
+
 ## License
 
 This project is licensed under the MIT License.  
