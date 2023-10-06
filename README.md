@@ -1,10 +1,16 @@
-# Code-Butler
+<div align="center">
+  
+<img src="https://github.com/ca-dp/code-butler/assets/11391317/d9efe235-2f6a-4036-b6b2-be18d4c444c1" width="180px">
 
 [![GitHub Super-Linter](https://github.com/ca-dp/code-butler/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/ca-dp/code-butler/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://github.com/ca-dp/code-butler/blob/main/badges/coverage.svg)
 
 GitHub Action for performing code reviews using the OpenAI API.
+
+</div>
+
+#
 
 ## Initial Setup
 
