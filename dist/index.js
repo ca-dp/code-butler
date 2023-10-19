@@ -11418,6 +11418,7 @@ async function completionRequest(apiKey, systemPrompt, userPrompt) {
             return response.choices[0].message.content || '';
         }
         else {
+            console.log('%o', response);
             throw new Error('Response content is missing');
         }
     }
