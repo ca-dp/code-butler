@@ -13,6 +13,9 @@ export async function run(): Promise<void> {
     switch (cmd) {
       case 'review': {
         const diff = await github.getPullRequestDiff()
+        if (diff === '') {
+          core.setFailed('Pull request diff is missing')
+        }
         const sysPrompt = prompt.getCodeReviewSystemPrompt()
         const messagePromise = ai.completionRequest(
           core.getInput('OPENAI_API_KEY', { required: true }),
@@ -22,7 +25,7 @@ export async function run(): Promise<void> {
         const message = await messagePromise
 
         if (message === '') {
-          core.setFailed('Response content is missing')
+          core.setFailed('[review]Response content is missing')
         }
 
         await github.createGitHubComment(message)
@@ -44,7 +47,7 @@ export async function run(): Promise<void> {
         )
         const response = await responseMessage
         if (response === '') {
-          core.setFailed('Response content is missing')
+          core.setFailed('[chat]Response content is missing')
         }
 
         await github.createGitHubComment(response)

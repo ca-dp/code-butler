@@ -90,7 +90,9 @@ describe('run', () => {
     await main.run()
 
     // Ensure the error message was set correctly
-    expect(setFailedMock).toHaveBeenCalledWith('Response content is missing')
+    expect(setFailedMock).toHaveBeenCalledWith(
+      '[review]Response content is missing'
+    )
 
     // Clear environment variables
     delete process.env.OPENAI_API_KEY
@@ -180,7 +182,9 @@ describe('run', () => {
     await main.run()
 
     // Ensure the error message was set correctly
-    expect(setFailedMock).toHaveBeenCalledWith('Response content is missing')
+    expect(setFailedMock).toHaveBeenCalledWith(
+      '[chat]Response content is missing'
+    )
 
     // Clear environment variables
     delete process.env.OPENAI_API_KEY
