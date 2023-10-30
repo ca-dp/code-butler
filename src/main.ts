@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as prompt from './prompt'
 import * as ai from './ai'
 import * as github from './github'
+import * as grouper from './grouper'
 
 /**
  * The main function for the action.
@@ -16,19 +17,24 @@ export async function run(): Promise<void> {
         if (diff === '') {
           core.setFailed('Pull request diff is missing')
         }
+        const groups = await grouper.groupFilesForReview(diff)
         const sysPrompt = prompt.getCodeReviewSystemPrompt()
-        const messagePromise = ai.completionRequest(
-          core.getInput('OPENAI_API_KEY', { required: true }),
-          sysPrompt,
-          diff
-        )
-        const message = await messagePromise
 
-        if (message === '') {
-          core.setFailed('[review]Response content is missing')
+        for (const group of groups) {
+          const diffToSend = group.join('')
+          const messagePromise = ai.completionRequest(
+            core.getInput('OPENAI_API_KEY', { required: true }),
+            sysPrompt,
+            diffToSend
+          )
+          const message = await messagePromise
+
+          if (message === '') {
+            core.setFailed('[review]Response content is missing')
+          }
+
+          await github.createGitHubComment(message)
         }
-
-        await github.createGitHubComment(message)
 
         break
       }

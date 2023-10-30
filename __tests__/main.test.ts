@@ -12,6 +12,7 @@ import * as ai from '../src/ai'
 import * as process from 'process'
 import * as prompt from '../src/prompt'
 import * as main from '../src/main'
+import * as grouper from '../src/grouper'
 
 const getInputMock = jest.spyOn(core, 'getInput')
 // Set the GITHUB_REPOSITORY environment variable for testing
@@ -47,6 +48,10 @@ describe('run', () => {
       'getCodeReviewSystemPrompt'
     )
     getCodeReviewSystemPromptMock.mockReturnValue('Mocked system prompt')
+
+    const groupFilesForReviewMock = jest.spyOn(grouper, 'groupFilesForReview')
+    const groupMockRes: string[][] = [['Mocked PR diff'], ['Mocked PR diff']]
+    groupFilesForReviewMock.mockResolvedValue(groupMockRes)
 
     // Call the function under test
     await main.run()
@@ -85,6 +90,10 @@ describe('run', () => {
     // Mock AI response with an empty message
     const completionRequestMock = jest.spyOn(ai, 'completionRequest')
     completionRequestMock.mockResolvedValue('')
+
+    const groupFilesForReviewMock = jest.spyOn(grouper, 'groupFilesForReview')
+    const groupMockRes: string[][] = [['Mocked PR diff'], ['Mocked PR diff']]
+    groupFilesForReviewMock.mockResolvedValue(groupMockRes)
 
     // Call the function under test
     await main.run()
