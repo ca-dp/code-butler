@@ -1,6 +1,6 @@
 title = "gitleaks config"
 
-[allowlist]
+[rules.allowlist]
 description = "global allow lists"
 paths = [
     '''gitleaks.toml''',
