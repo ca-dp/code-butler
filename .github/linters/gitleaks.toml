@@ -7,5 +7,5 @@ paths = [
     '''node_modules''',
     '''package-lock.json''',
     '''package.json''',
-    '''dist/index.js''',
+    '''(.*?)(jpg|gif|doc|docx|zip|xls|pdf|bin|svg|socket|vsidx|v2|suo|wsuo|.dll|pdb|exe|js)$''',
 ]
