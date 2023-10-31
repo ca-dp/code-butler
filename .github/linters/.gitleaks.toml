@@ -1,0 +1,11 @@
+title = "gitleaks config"
+
+[allowlist]
+description = "global allow lists"
+paths = [
+    '''.gitleaks.toml''',
+    '''node_modules''',
+    '''package-lock.json''',
+    '''package.json''',
+    '''dist/index.js''',
+]
