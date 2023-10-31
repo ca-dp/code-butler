@@ -1,5 +1,3 @@
-import { encoding_for_model } from 'tiktoken'
-
 export async function groupFilesForReview(diff: string): Promise<string[][]> {
   // Split the diff into files
   const files = diff.split('diff --git ')
@@ -72,7 +70,8 @@ function sumTokensInGroup(group: string[]): number {
 
 // Implement token counting function (countTokensInDiff) to count tokens in a file's diff
 function countTokensInDiff(diff: string): number {
-  const enc = encoding_for_model('gpt-3.5-turbo')
+  const module = require('js-tiktoken')
+  const enc = module.encodingForModel('gpt-3.5-turbo')
   const encoded = enc.encode(diff)
   const tokens = encoded.length
 
