@@ -8,4 +8,5 @@ paths = [
     '''package-lock.json''',
     '''package.json''',
     '''(.*?)(jpg|gif|doc|docx|zip|xls|pdf|bin|svg|socket|vsidx|v2|suo|wsuo|.dll|pdb|exe|js)$''',
+    '''/github/workspace/dist/index.js''',
 ]
