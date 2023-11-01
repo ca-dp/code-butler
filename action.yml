@@ -1,5 +1,5 @@
-name: 'code-butler'
-description: 'code-butler'
+name: 'CodeButler'
+description: 'GitHub Action for performing code reviews using the OpenAI API.'
 author: 'ouchi2501'
 
 inputs:
@@ -9,12 +9,6 @@ inputs:
   OPENAI_API_KEY:
     description: 'OpenAI API Key'
     required: true
-  cmd:
-    description: 'Command to run(review or chat)'
-    required: true
-  comment_body:
-    description: 'Comment body'
-    required: false
 
 runs:
   using: node20
