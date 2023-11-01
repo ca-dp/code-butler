@@ -1,4 +1,4 @@
-name: 'butler'
+name: 'code-butler for PR Review'
 description: 'GitHub Action for performing code reviews using the OpenAI API.'
 author: 'ouchi2501'
 
