@@ -71,4 +71,42 @@ describe('completionRequest', () => {
     )
     consoleLogSpy.mockRestore()
   })
+
+  it('model gpt4 should be used', async () => {
+    const apiKey = 'test-api-key'
+    const systemPrompt = 'System prompt'
+    const userPrompt = 'User prompt'
+    const model = 'gpt-4'
+
+    // Mock the OpenAI API request
+    // Mock the OpenAI API request
+    nock('https://api.openai.com')
+      .post('/v1/chat/completions', {
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        model: 'gpt-4'
+      })
+      .reply(200, {
+        choices: [
+          {
+            message: {
+              content: 'Expected completed content'
+            }
+          }
+        ]
+      })
+
+    // Call the completionRequest function to test it
+    const result = await completionRequest(
+      apiKey,
+      systemPrompt,
+      userPrompt,
+      model
+    )
+
+    // Assert based on the expected result
+    expect(result).toBe('Expected completed content')
+  })
 })

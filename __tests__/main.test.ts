@@ -37,6 +37,8 @@ describe('run', () => {
           return 'mocked-api-key'
         case 'cmd':
           return 'review'
+        case 'model':
+          return 'mock ai model'
         default:
           return ''
       }
@@ -61,7 +63,8 @@ describe('run', () => {
     expect(completionRequestMock).toHaveBeenCalledWith(
       'mocked-api-key',
       'Mocked system prompt',
-      'Mocked PR diff'
+      'Mocked PR diff',
+      'mock ai model'
     )
     expect(createGitHubCommentMock).toHaveBeenCalledWith('Mocked AI response')
   })
@@ -159,7 +162,8 @@ describe('run', () => {
     expect(completionRequestMock).toHaveBeenCalledWith(
       'mocked-api-key',
       'Mocked system prompt',
-      'Mocked issue comment'
+      'Mocked issue comment',
+      ''
     )
     expect(createGitHubCommentMock).toHaveBeenCalledWith('Mocked AI response')
   })

@@ -22,10 +22,12 @@ export async function run(): Promise<void> {
 
         for (const group of groups) {
           const diffToSend = group.join('')
+          const model = core.getInput('model', { required: false })
           const messagePromise = ai.completionRequest(
             core.getInput('OPENAI_API_KEY', { required: true }),
             sysPrompt,
-            diffToSend
+            diffToSend,
+            model
           )
           const message = await messagePromise
 
@@ -46,10 +48,12 @@ export async function run(): Promise<void> {
         }
 
         const chatSystemPrompt = prompt.getChatSystemPrompt()
+        const model = core.getInput('model', { required: false })
         const responseMessage = ai.completionRequest(
           core.getInput('OPENAI_API_KEY', { required: true }),
           chatSystemPrompt,
-          comment
+          comment,
+          model
         )
         const response = await responseMessage
         if (response === '') {
