@@ -3,18 +3,20 @@ import OpenAI from 'openai'
 export async function completionRequest(
   apiKey: string,
   systemPrompt: string,
-  userPrompt: string
+  userPrompt: string,
+  model: string | undefined = undefined
 ): Promise<string> {
   try {
     const openai = new OpenAI({ apiKey })
     const requestTimeout = 300 * 1000 // 5 minutes
+    const targetModel = model || 'gpt-3.5-turbo'
     const response = await openai.chat.completions.create(
       {
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        model: 'gpt-3.5-turbo'
+        model: targetModel
       },
       {
         timeout: requestTimeout
