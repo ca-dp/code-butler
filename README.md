@@ -58,6 +58,8 @@ jobs:
   - This is the command to run. Currently, `review` and `chat` are supported.
   - `review` will add a comment to the pull request with a code review.
   - `chat` will add a comment to the pull request with a chat message.
+- model
+  - This is the model to use. default is `gpt-3.5-turbo`.
 - comment_body
   - This is the body of the comment that will be added to the pull request. This is only used when `cmd` is set to `chat`.
   - This is an optional parameter. The body of the comment that triggered the GitHub Action will be used.
