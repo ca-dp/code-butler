@@ -77,7 +77,9 @@ The Security concerns section will also point out any security concerns you may 
 
 #### Note
 
-When the `gpt-4-1106-preview` model is selected, the entire diff is sent to OpenAI without grouping. This is different from the default behavior, where the diff is grouped before being sent to OpenAI. This feature allows for more detailed and specific code reviews when using the `gpt-4-1106-preview` model.
+When the `gpt-4-1106-preview` model is selected, the entire diff is sent to OpenAI without grouping.  
+This is different from the default behavior, where the diff is grouped before being sent to OpenAI.  
+This feature allows for more detailed and specific code reviews when using the `gpt-4-1106-preview` model.
 
 ### Chat
 
