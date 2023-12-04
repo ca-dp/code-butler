@@ -203,5 +203,170 @@ describe('run', () => {
     delete process.env.OPENAI_API_KEY
   })
 
+  it('should send the entire diff to OpenAI when model is gpt-4-1106-preview', async () => {
+    // Set required environment variables
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        case 'model':
+          return 'gpt-4-1106-preview'
+        default:
+          return ''
+      }
+    })
+
+    // Create mock functions
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue('Mocked PR diff')
+
+    const completionRequestMock = jest.spyOn(ai, 'completionRequest')
+    completionRequestMock.mockResolvedValue('Mocked AI response')
+
+    const createGitHubCommentMock = jest.spyOn(github, 'createGitHubComment')
+    createGitHubCommentMock.mockResolvedValue(undefined)
+
+    // Set a dummy prompt
+    const getCodeReviewSystemPromptMock = jest.spyOn(
+      prompt,
+      'getCodeReviewSystemPrompt'
+    )
+    getCodeReviewSystemPromptMock.mockReturnValue('Mocked system prompt')
+
+    // Call the function under test
+    await main.run()
+
+    // Ensure each function was called correctly
+    expect(getPullRequestDiffMock).toHaveBeenCalled()
+    expect(completionRequestMock).toHaveBeenCalledWith(
+      'mocked-api-key',
+      'Mocked system prompt',
+      'Mocked PR diff',
+      'gpt-4-1106-preview'
+    )
+    expect(createGitHubCommentMock).toHaveBeenCalledWith('Mocked AI response')
+  })
+
+  it('should handle missing pull request diff', async () => {
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        default:
+          return ''
+      }
+    })
+
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue('')
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    await main.run()
+
+    expect(setFailedMock).toHaveBeenCalledWith('Pull request diff is missing')
+  })
+
+  it('should handle missing AI response message in review', async () => {
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        default:
+          return ''
+      }
+    })
+
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue('Mocked PR diff')
+
+    const completionRequestMock = jest.spyOn(ai, 'completionRequest')
+    completionRequestMock.mockResolvedValue('')
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    await main.run()
+
+    expect(setFailedMock).toHaveBeenCalledWith(
+      '[review]Response content is missing'
+    )
+  })
+
+  it('should handle missing comment body in chat', async () => {
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'chat'
+        default:
+          return ''
+      }
+    })
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    await main.run()
+
+    expect(setFailedMock).toHaveBeenCalledWith('Comment body is missing')
+  })
+
+  it('should handle error in run function', async () => {
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        default:
+          return ''
+      }
+    })
+
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockRejectedValue(new Error('Mocked error'))
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    await main.run()
+
+    expect(setFailedMock).toHaveBeenCalledWith('Mocked error')
+  })
+
+  it('should handle missing AI response message when model is gpt-4-1106-preview', async () => {
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        case 'model':
+          return 'gpt-4-1106-preview'
+        default:
+          return ''
+      }
+    })
+
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue('Mocked PR diff')
+
+    const completionRequestMock = jest.spyOn(ai, 'completionRequest')
+    completionRequestMock.mockResolvedValue('')
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    await main.run()
+
+    expect(setFailedMock).toHaveBeenCalledWith(
+      '[review]Response content is missing'
+    )
+  })
+
   // Additional test cases for other error scenarios can be added
 })

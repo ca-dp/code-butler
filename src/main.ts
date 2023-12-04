@@ -17,27 +17,43 @@ export async function run(): Promise<void> {
         if (diff === '') {
           core.setFailed('Pull request diff is missing')
         }
-        const groups = await grouper.groupFilesForReview(diff)
-        const sysPrompt = prompt.getCodeReviewSystemPrompt()
-
-        for (const group of groups) {
-          const diffToSend = group.join('')
-          const model = core.getInput('model', { required: false })
+        const model = core.getInput('model', { required: false })
+        if (model === 'gpt-4-1106-preview') {
+          const sysPrompt = prompt.getCodeReviewSystemPrompt()
           const messagePromise = ai.completionRequest(
             core.getInput('OPENAI_API_KEY', { required: true }),
             sysPrompt,
-            diffToSend,
+            diff,
             model
           )
-          const message = await messagePromise
 
+          const message = await messagePromise
           if (message === '') {
             core.setFailed('[review]Response content is missing')
           }
 
           await github.createGitHubComment(message)
-        }
+        } else {
+          const groups = await grouper.groupFilesForReview(diff)
+          const sysPrompt = prompt.getCodeReviewSystemPrompt()
 
+          for (const group of groups) {
+            const diffToSend = group.join('')
+            const messagePromise = ai.completionRequest(
+              core.getInput('OPENAI_API_KEY', { required: true }),
+              sysPrompt,
+              diffToSend,
+              model
+            )
+
+            const message = await messagePromise
+            if (message === '') {
+              core.setFailed('[review]Response content is missing')
+            }
+
+            await github.createGitHubComment(message)
+          }
+        }
         break
       }
       case 'chat': {
