@@ -75,6 +75,12 @@ The PR Analysis section will describe the main theme, a summary of the PR, and w
 The PR Feedback section provides suggestions and constructive feedback on the code.  
 The Security concerns section will also point out any security concerns you may have.  
 
+#### Note
+
+When the `gpt-4-1106-preview` model is selected, the entire diff is sent to OpenAI without grouping.  
+This is different from the default behavior, where the diff is grouped before being sent to OpenAI.  
+This feature allows for more detailed and specific code reviews when using the `gpt-4-1106-preview` model.
+
 ### Chat
 
 ![スクリーンショット 2023-10-05 午後2 06 20](https://github.com/ca-dp/code-butler/assets/11391317/543c3340-0174-421b-b916-3e08542df0aa)
