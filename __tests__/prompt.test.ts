@@ -16,7 +16,7 @@ describe('getCodeReviewSystemPrompt', () => {
     - Avoid Docstring and Type Hint Suggestions: Do not suggest adding docstrings or type hints, as this is outside the scope of this review.
     - Focus on New Code: Keep your feedback centered on the new code introduced in the PR (lines starting with '+').
     You must use the following markdown schema to format your answer:
-    \`\`\`markdown
+    
     ## PR Analysis
       ### Main theme
         type: string
@@ -57,7 +57,6 @@ describe('getCodeReviewSystemPrompt', () => {
         type: string
         description: >-
           "yes\\\\no question: Does this PR code introduce possible security concerns or issues, such as SQL injection, XSS, CSRF, and others? If you answered 'yes,' briefly explain your answer."
-      \`\`\`
       
       Don't repeat the prompt in the answer, and avoid outputting the 'type' and 'description' fields.
 `
