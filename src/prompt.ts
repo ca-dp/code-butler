@@ -62,10 +62,23 @@ const chatSystemPrompt = `
     Also, don't repeat the prompt in your answer.
 `
 
+const translateSystemPrompt = `
+    I want you to act as an English translator, spelling corrector and improver.
+    I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English.
+    I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences.
+    Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations.
+    If the detected language is English, answer 'NO_REPLY'.
+    Also, don't repeat the prompt in your answer.
+`
+
 export function getCodeReviewSystemPrompt(): string {
   return codeReviewSystemPrompt
 }
 
 export function getChatSystemPrompt(): string {
   return chatSystemPrompt
+}
+
+export function getTranslateSystemPrompt(): string {
+  return translateSystemPrompt
 }
