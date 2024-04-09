@@ -82,16 +82,17 @@ describe('getCodeReviewSystemPromptJa', () => {
     以下のガイドラインに注意してください：
     - DocstringとType Hintの提案は避けてください： ドキュメントストリングやタイプヒントの追加は、このレビューの範囲外ですので、提案しないでください。
     - 新しいコードに集中してください： PRで導入された新しいコード（'+'で始まる行）を中心にフィードバックを書いてください。
+    - 日本語で回答してください
     以下のマークダウンスキーマを使用してください：
 
     ## PR Analysis
-      ### Main theme
+      ### メインテーマ
         type: string
         description: "PRに関する簡単な説明"
-      ### PR summary
+      ### PR サマリー
         type: string
         description: "PRを2-3行で要約する"
-      ### Type of PR
+      ### PR タイプ
         type: string
         enum:
           - Bug fix
@@ -100,12 +101,12 @@ describe('getCodeReviewSystemPromptJa', () => {
           - Enhancement
           - Documentation
           - Other
-    ## PR Feedback:
-      ### General suggestions
+    ## PR フィードバック:
+      ### 一般的なフィードバック
         type: string
         description: |-
            この PR の貢献者やメンテナに対して、一般的なフィードバックや提案を行ってください。これには、PR の全体的な構造、主な目的、ベストプラクティス、致命的なバグ、その他の側面に関する提案を含みます。PR のタイトルや説明、テストがないことについては触れないでください。あなたの提案を説明してください。
-      ### Code feedback
+      ### コードのフィードバック
         type: array
         uniqueItems: true
         items:
@@ -120,7 +121,7 @@ describe('getCodeReviewSystemPromptJa', () => {
             type: string
             description: |-
                提案が適用される関連ファイルから抽出された単一のコード行を共有する。コード行は '+' で始める。その行が関連ファイルに表示されている通りに出力されていることを確認してください。
-      ### Security concerns:
+      ### セキュリティ上の懸念:
         type: string
         description: >-
           "yes\\\\no question: このPRコードは、SQLインジェクション、XSS、CSRFなどのセキュリティ上の懸念や問題を引き起こす可能性がありますか？はい」と答えた場合、簡潔に説明してください"
