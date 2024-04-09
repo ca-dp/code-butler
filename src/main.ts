@@ -18,8 +18,13 @@ export async function run(): Promise<void> {
           core.setFailed('Pull request diff is missing')
         }
         const model = core.getInput('model', { required: false })
+        const lang = core.getInput('lang', { required: false }) || 'en'
+
+        if (!(lang === 'ja' || lang === 'en')) {
+          core.setFailed('Language is not supported')
+        }
         if (model === 'gpt-4-1106-preview') {
-          const sysPrompt = prompt.getCodeReviewSystemPrompt()
+          const sysPrompt = prompt.getCodeReviewSystemPrompt(lang)
           const messagePromise = ai.completionRequest(
             core.getInput('OPENAI_API_KEY', { required: true }),
             sysPrompt,
@@ -35,7 +40,7 @@ export async function run(): Promise<void> {
           await github.createGitHubComment(message)
         } else {
           const groups = await grouper.groupFilesForReview(diff)
-          const sysPrompt = prompt.getCodeReviewSystemPrompt()
+          const sysPrompt = prompt.getCodeReviewSystemPrompt(lang)
 
           for (const group of groups) {
             const diffToSend = group.join('')
@@ -63,7 +68,12 @@ export async function run(): Promise<void> {
           core.setFailed('Comment body is missing')
         }
 
-        const chatSystemPrompt = prompt.getChatSystemPrompt()
+        const lang = core.getInput('lang', { required: false }) || 'en'
+        if (!(lang === 'ja' || lang === 'en')) {
+          core.setFailed('Language is not supported')
+        }
+
+        const chatSystemPrompt = prompt.getChatSystemPrompt(lang)
         const model = core.getInput('model', { required: false })
         const responseMessage = ai.completionRequest(
           core.getInput('OPENAI_API_KEY', { required: true }),
