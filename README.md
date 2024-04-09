@@ -38,6 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           cmd: review
+          lang: en
   chat:
     if: startsWith(github.event.comment.body, '/chat')
     runs-on: ubuntu-latest
@@ -48,6 +49,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           cmd: chat
           comment_body: ${{ github.event.comment.body }}
+          lang: ja
 ```
 
 - GITHUB_TOKEN
@@ -63,6 +65,9 @@ jobs:
 - comment_body
   - This is the body of the comment that will be added to the pull request. This is only used when `cmd` is set to `chat`.
   - This is an optional parameter. The body of the comment that triggered the GitHub Action will be used.
+- lang
+  - This is the language to use. default is `en`.
+  - Currently, `en` and `ja` are supported.
 
 ## Features
 
