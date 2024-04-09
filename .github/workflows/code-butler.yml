@@ -13,20 +13,22 @@ jobs:
     if: startsWith(github.event.comment.body, '/review')
     runs-on: ubuntu-latest
     steps:
-      - uses: ca-dp/code-butler@v1
+      - uses: ca-dp/code-butler@04305629f6a3a5fffbfc99be9c10cd16e76fa7fa
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           cmd: review
           model: gpt-4-1106-preview
+          lang: ja
   chat:
     if: startsWith(github.event.comment.body, '/chat')
     runs-on: ubuntu-latest
     steps:
-      - uses: ca-dp/code-butler@v1
+      - uses: ca-dp/code-butler@04305629f6a3a5fffbfc99be9c10cd16e76fa7fa
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           cmd: chat
           model: gpt-4-1106-preview
           comment_body: ${{ github.event.comment.body }}
+          lang: ja
