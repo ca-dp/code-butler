@@ -519,5 +519,136 @@ describe('run', () => {
     )
   })
 
+  it('should run main.run() with diff functionality', async () => {
+    // Set required environment variables
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        case 'exclude_files':
+          return 'file1.js,file2.ts'
+        case 'exclude_extensions':
+          return 'js'
+        case 'model':
+          return 'mock ai model'
+        default:
+          return ''
+      }
+    })
+
+    // Create mock functions
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue(
+      'diff --git a/file1.js b/file1.js\n' +
+        'diff --git a/file2.ts b/file2.ts\n' +
+        'diff --git a/file3.txt b/file3.txt\n' +
+        'diff --git a/file4.js b/file4.js\n'
+    )
+
+    const completionRequestMock = jest.spyOn(ai, 'completionRequest')
+    completionRequestMock.mockResolvedValue('Mocked AI response')
+
+    const createGitHubCommentMock = jest.spyOn(github, 'createGitHubComment')
+    createGitHubCommentMock.mockResolvedValue(undefined)
+
+    // Set a dummy prompt
+    const getCodeReviewSystemPromptMock = jest.spyOn(
+      prompt,
+      'getCodeReviewSystemPrompt'
+    )
+    getCodeReviewSystemPromptMock.mockReturnValue('Mocked system prompt')
+
+    const groupFilesForReviewMock = jest.spyOn(grouper, 'groupFilesForReview')
+    const groupMockRes: string[][] = [['diff --git a/file3.txt b/file3.txt\n']]
+    groupFilesForReviewMock.mockResolvedValue(groupMockRes)
+
+    // Call the function under test
+    await main.run()
+
+    // Ensure each function was called correctly
+    expect(getPullRequestDiffMock).toHaveBeenCalled()
+    expect(completionRequestMock).toHaveBeenCalledWith(
+      'mocked-api-key',
+      'Mocked system prompt',
+      'diff --git a/file3.txt b/file3.txt\n',
+      'mock ai model'
+    )
+    expect(createGitHubCommentMock).toHaveBeenCalledWith('Mocked AI response')
+  })
+
+  it('should handle all files excluded in main.run()', async () => {
+    // Set required environment variables
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        case 'exclude_files':
+          return 'file1.js,file2.ts'
+        case 'exclude_extensions':
+          return 'js,ts,txt'
+        case 'model':
+          return 'mock ai model'
+        default:
+          return ''
+      }
+    })
+
+    // Create mock functions
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue(
+      'diff --git a/file1.js b/file1.js\n' +
+        'diff --git a/file2.ts b/file2.ts\n' +
+        'diff --git a/file3.txt b/file3.txt\n' +
+        'diff --git a/file4.js b/file4.js\n'
+    )
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    // Call the function under test
+    await main.run()
+
+    // Ensure the error message was set correctly
+    expect(setFailedMock).toHaveBeenCalledWith('All files are excluded')
+  })
+
+  it('should handle all files excluded by removeTargetFileFromDiff', async () => {
+    // Set required environment variables
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'OPENAI_API_KEY':
+          return 'mocked-api-key'
+        case 'cmd':
+          return 'review'
+        case 'exclude_files':
+          return 'file1.js,file2.ts,file3.txt,file4.js'
+        case 'model':
+          return 'mock ai model'
+        default:
+          return ''
+      }
+    })
+
+    // Create mock functions
+    const getPullRequestDiffMock = jest.spyOn(github, 'getPullRequestDiff')
+    getPullRequestDiffMock.mockResolvedValue(
+      'diff --git a/file1.js b/file1.js\n' +
+        'diff --git a/file2.ts b/file2.ts\n' +
+        'diff --git a/file3.txt b/file3.txt\n' +
+        'diff --git a/file4.js b/file4.js\n'
+    )
+
+    const setFailedMock = jest.spyOn(core, 'setFailed')
+
+    // Call the function under test
+    await main.run()
+
+    // Ensure the error message was set correctly
+    expect(setFailedMock).toHaveBeenCalledWith('All files are excluded')
+  })
+
   // Additional test cases for other error scenarios can be added
 })

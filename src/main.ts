@@ -3,6 +3,7 @@ import * as prompt from './prompt'
 import * as ai from './ai'
 import * as github from './github'
 import * as grouper from './grouper'
+import * as exclude from './diff'
 
 /**
  * The main function for the action.
@@ -17,6 +18,32 @@ export async function run(): Promise<void> {
         if (diff === '') {
           core.setFailed('Pull request diff is missing')
         }
+        const excludeFiles = core.getInput('exclude_files', { required: false })
+        const excludeExtensions = core.getInput('exclude_extensions', {
+          required: false
+        })
+
+        let updatedDiff = diff
+
+        if (excludeFiles !== '') {
+          const files = excludeFiles.split(',')
+          updatedDiff = exclude.removeTargetFileFromDiff(updatedDiff, files)
+          if (updatedDiff === '') {
+            core.setFailed('All files are excluded')
+          }
+        }
+
+        if (excludeExtensions !== '') {
+          const extensions = excludeExtensions.split(',')
+          updatedDiff = exclude.removeFilesWithExtensionsFromDiff(
+            updatedDiff,
+            extensions
+          )
+          if (updatedDiff === '') {
+            core.setFailed('All files are excluded')
+          }
+        }
+
         const model = core.getInput('model', { required: false })
         const lang = core.getInput('lang', { required: false }) || 'en'
 
@@ -28,7 +55,7 @@ export async function run(): Promise<void> {
           const messagePromise = ai.completionRequest(
             core.getInput('OPENAI_API_KEY', { required: true }),
             sysPrompt,
-            diff,
+            updatedDiff,
             model
           )
 
@@ -39,7 +66,7 @@ export async function run(): Promise<void> {
 
           await github.createGitHubComment(message)
         } else {
-          const groups = await grouper.groupFilesForReview(diff)
+          const groups = await grouper.groupFilesForReview(updatedDiff)
           const sysPrompt = prompt.getCodeReviewSystemPrompt(lang)
 
           for (const group of groups) {
