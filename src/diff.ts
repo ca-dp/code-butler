@@ -12,7 +12,6 @@ export function removeTargetFileFromDiff(
   const filteredFiles = files.filter(fileDiff => {
     // Extract the file name from the diff
     const fileName = fileDiff.split(' ')[1].split('\n')[0]
-    console.log(fileName)
 
     // Check if the file name is included in any of the target files
     return !targetFiles.some(targetFile => fileName.includes(targetFile))
@@ -24,11 +23,7 @@ export function removeTargetFileFromDiff(
   }
 
   // Join the remaining files back into a diff
-  const updatedDiff = `diff --git ${filteredFiles.join('diff --git ')}`
-
-  console.log(updatedDiff)
-
-  return updatedDiff
+  return `diff --git ${filteredFiles.join('diff --git ')}`
 }
 
 export function removeFilesWithExtensionsFromDiff(
@@ -49,8 +44,6 @@ export function removeFilesWithExtensionsFromDiff(
     // Extract the extension from the file name
     const extension = fileName.split('.').pop()
 
-    console.log(extension)
-
     // Check if the extension is included in the specified extensions
     // and if the extension is not undefined
     return extension && !extensions.includes(extension)
@@ -62,9 +55,5 @@ export function removeFilesWithExtensionsFromDiff(
   }
 
   // Join the remaining files back into a diff
-  const updatedDiff = `diff --git ${filteredFiles.join('diff --git ')}`
-
-  console.log(updatedDiff)
-
-  return updatedDiff
+  return `diff --git ${filteredFiles.join('diff --git ')}`
 }
