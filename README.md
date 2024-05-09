@@ -146,6 +146,7 @@ jobs:
 ```
 
 #### Use the `gpt-4-1106-preview` model
+
 ```yaml
 name: Code Butler
 
@@ -296,8 +297,6 @@ jobs:
           comment_body: ${{ github.event.comment.body }}
           lang: en
 ```
-
-
 
 ## License
 
