@@ -68,6 +68,18 @@ jobs:
 - lang
   - This is the language to use. default is `en`.
   - Currently, `en` and `ja` are supported.
+- exclude_files
+  - This is the file to exclude from the code review. default is `""`.
+  - This is an optional parameter. You can specify the file you want to exclude from the code review.
+  - The format is `foo/var/test.ts` or `foo/bar/test.ts,foo/bar/test.yml`.
+  - The file path is relative to the repository root.
+  - The file path is separated by `,`.
+  - If only a directory is specified, files containing that directory are also excluded.
+- exclude_extensions
+  - This is the extension to exclude from the code review. default is `""`.
+  - This is an optional parameter. You can specify the extension you want to exclude from the code review.
+  - The format is `ts` or `ts,yml`.
+  - The extension is separated by `,`.
 
 ## Features
 
@@ -93,6 +105,198 @@ This feature allows for more detailed and specific code reviews when using the `
 When you comment `/chat` within a pull request, the AI will respond to your comment.  
 Basically any question can be answered.  
 You will be able to communicate with ChatGPT on PR as well.  
+
+### Example
+
+#### Render into Japanese
+
+```yaml
+name: Code Butler
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: review
+          lang: ja
+  chat:
+    if: startsWith(github.event.comment.body, '/chat')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: chat
+          comment_body: ${{ github.event.comment.body }}
+          lang: ja
+```
+
+#### Use the `gpt-4-1106-preview` model
+
+```yaml
+name: Code Butler
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: review
+          lang: en
+          model: gpt-4-1106-preview
+  chat:
+    if: startsWith(github.event.comment.body, '/chat')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: chat
+          comment_body: ${{ github.event.comment.body }}
+          model: gpt4-1106-preview
+          lang: en
+```
+
+#### Excluding Files
+
+```yaml
+name: Code Butler
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: review
+          lang: en
+          exclude_files: "foo/bar/test.ts,foo/bar/test.yml"
+  chat:
+    if: startsWith(github.event.comment.body, '/chat')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: chat
+          comment_body: ${{ github.event.comment.body }}
+          lang: en
+```
+
+#### Excluding Directories
+
+```yaml
+name: Code Butler
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: review
+          lang: en
+          exclude_files: "foo/bar/"
+  chat:
+    if: startsWith(github.event.comment.body, '/chat')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: chat
+          comment_body: ${{ github.event.comment.body }}
+          lang: en
+```
+
+#### Excluding Extensions
+
+```yaml
+name: Code Butler
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: review
+          lang: en
+          exclude_extensions: "ts,yml"
+  chat:
+    if: startsWith(github.event.comment.body, '/chat')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ca-dp/code-butler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          cmd: chat
+          comment_body: ${{ github.event.comment.body }}
+          lang: en
+```
 
 ## License
 
