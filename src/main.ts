@@ -68,6 +68,7 @@ export async function run(): Promise<void> {
         } else {
           const groups = await grouper.groupFilesForReview(updatedDiff)
           const sysPrompt = prompt.getCodeReviewSystemPrompt(lang)
+          let aggregatedMessages = "";
 
           for (const group of groups) {
             const diffToSend = group.join('')
@@ -83,7 +84,11 @@ export async function run(): Promise<void> {
               core.setFailed('[review]Response content is missing')
             }
 
-            await github.createGitHubComment(message)
+            aggregatedMessages += message + "\n\n---\n\n";
+          }
+
+          if (aggregatedMessages !== "") {
+            await github.createGitHubComment(aggregatedMessages)
           }
         }
         break
