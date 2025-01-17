@@ -9,6 +9,25 @@ inputs:
   OPENAI_API_KEY:
     description: 'OpenAI API Key'
     required: true
+  cmd:
+    description: 'Command is one of review/chat'
+    required: true
+  model:
+    description: 'Model which should be used for the command'
+    required: false
+  lang:
+    description: 'Language be used in response, ja or en'
+    required: false
+    default: 'en'
+  comment_body:
+    description: 'Iterative input string. Contains questions for example'
+    required: false
+  exclude_files:
+    description: 'Files to not scan. Using commas to separate file names'
+    required: false
+  exclude_extensions:
+    description: 'File extensions which should not be scanned. Using commas to separate extensions name'
+    required: false
 
 runs:
   using: node20
